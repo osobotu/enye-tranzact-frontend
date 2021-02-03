@@ -61,6 +61,9 @@ export default {
 @import "~assets/styles/variables";
 
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   box-shadow: 0px 2px 4px rgba($color1, 0.2);
   .top {
     padding: 0 var(--body-padding);
@@ -70,6 +73,7 @@ export default {
     height: 50px;
     background: $color3;
     color: white;
+    
     .brand {
       text-transform: uppercase;
       font-size: 12px;
