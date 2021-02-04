@@ -2,20 +2,35 @@
   <div class="container">
     <navbar-component />
     <section class="main-section">
-      <div class="user-details-container d-none d-block-tablet" v-for="i in 20" :key="i">
-        <user-details />
+      <div
+        class="user-details-container d-none d-block-tablet"
+        v-for="(displayingProfile, i) in displayingProfiles"
+        :key="i"
+      >
+        <user-details :profile="displayingProfile" />
       </div>
-      <div class="user-profile-strip-container d-none-tablet" v-for="i in 20" :key="i">
-        <user-profile-strip @show-modal="showModal()" />
+      <div
+        class="user-profile-strip-container d-none-tablet"
+        v-for="(displayingProfile, i)  in displayingProfiles"
+        :key="i"
+      >
+        <user-profile-strip :profile="displayingProfile" @show-modal="showModal(i)" />
       </div>
     </section>
     <div class="pagination-group-container">
-      <pagination-button-group />
+      <pagination-button-group
+        @navigate="paginationNavigate($event)"
+        :paginationData="paginationData"
+      />
     </div>
 
     <!-- user details modal for mobile -->
     <div class="user-details-modal" :class="{show: showingModal}">
-      <user-details @close-button-clicked="closeModal()" :showCloseButton="true" />
+      <user-details
+        @close-button-clicked="closeModal()"
+        :profile="profilePopup"
+        :showCloseButton="true"
+      />
     </div>
   </div>
 </template>
@@ -29,8 +44,23 @@ import PaginationButtonGroup from "~/components/PaginationButtonGroup";
 export default {
   data() {
     return {
-      showingModal: false
+      showingModal: false,
+      profiles: [],
+      profilePopupIndex: 0,
+      paginationData: {
+        index: 1,
+        perpage: 20,
+        isFirstPage: true,
+        isLastPage: false,
+      }
     };
+  },
+  async fetch() {
+    await this.$axios
+      .$get(`https://api.enye.tech/v1/challenge/records`)
+      .then(response => {
+        this.profiles = response.records.profiles;
+      });
   },
   components: {
     NavbarComponent,
@@ -39,11 +69,52 @@ export default {
     UserProfileStrip
   },
   methods: {
-    showModal() {
+    showModal(i) {
+      this.profilePopupIndex = i;
       this.showingModal = true;
     },
     closeModal() {
       this.showingModal = false;
+    },
+    paginationNavigate(val) {
+      // val = 1 next,
+      // val = 2 last page,
+      // val = -1 previous,
+      // val = -2 first
+
+      let temp = this.paginationData.index;
+      temp = temp + val;
+
+      if (Math.abs(val) == 1) {
+        if (temp < 1) {
+          temp = 1;
+        } else if (temp > Math.ceil(this.profiles.length / 20)) {
+          temp = Math.ceil(this.profiles.length / 20);
+        }
+      } else {
+        if(val < 0){
+          temp = 1;
+        }else {
+          temp = Math.ceil(this.profiles.length / 20);
+        }
+      }
+
+      Object.assign(this.paginationData, {
+        index: temp,
+        isFirstPage: temp == 1,
+        isLastPage: temp == Math.ceil(this.profiles.length / 20)
+      });
+    }
+  },
+  computed: {
+    profilePopup() {
+      return this.displayingProfiles[this.profilePopupIndex];
+    },
+    displayingProfiles() {
+      const startIndex =
+        (this.paginationData.index - 1) * this.paginationData.perpage;
+      const endIndexExclusive = startIndex + this.paginationData.perpage;
+      return this.profiles.slice(startIndex, endIndexExclusive);
     }
   }
 };

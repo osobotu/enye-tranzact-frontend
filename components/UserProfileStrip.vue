@@ -2,7 +2,7 @@
   <div class="user-profile-strip">
     <div class="profile-container">
       <div class="profile-photo-container">
-        <div class="profile-photo"></div>
+        <div class="profile-photo" :class="{female: (profile.Gender || '').toLowerCase() == `female`}"></div>
       </div>
       <div class="content">
         <div class="options-container" @click="showModal()">
@@ -16,9 +16,9 @@
           </div>
           <div class="divider"></div>
           <div class="responses">
-            <div class="response name">Oyinbo David</div>
-            <div class="response">871-032-9564</div>
-            <div class="response">1976-08-12 01:06:24</div>
+            <div class="response name">{{`${profile.FirstName} ${profile.LastName}`}}</div>
+            <div class="response">{{profile.PhoneNumber}}</div>
+            <div class="response">{{profile.LastLogin}}</div>
           </div>
         </div>
       </div>
@@ -29,9 +29,14 @@
 
 <script>
 export default {
-  methods:{
-    showModal(){
-      this.$emit("show-modal")
+  props: {
+    profile: {
+      required: true
+    }
+  },
+  methods: {
+    showModal() {
+      this.$emit("show-modal");
     }
   }
 };
@@ -47,10 +52,10 @@ export default {
   position: relative;
 
   .options-container {
-      position: absolute;
-      top: var(--strip-padding);
-      right: var(--body-padding);
-      cursor: pointer;
+    position: absolute;
+    top: var(--strip-padding);
+    right: var(--body-padding);
+    cursor: pointer;
   }
   .border-bottom {
     height: 1px;
@@ -68,7 +73,7 @@ export default {
     overflow: hidden;
 
     @media only screen and (min-width: 375px) {
-        --profile-picture-size: 56px;
+      --profile-picture-size: 56px;
     }
     .profile-photo-container {
       .profile-photo {
@@ -79,6 +84,9 @@ export default {
         background-size: cover;
         background-position: center center;
         background-repeat: no-repeat;
+        &.female {
+          background-image: url("/images/female.jpg");
+        }
       }
     }
   }

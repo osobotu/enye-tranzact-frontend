@@ -1,23 +1,38 @@
 <template>
   <div class="pagination-button-group">
-    <div class="previous-x2">
+    <div :class="{muted: paginationData.isFirstPage}" class="previous-x2" @click="paginationNavigate(-2)">
       <i class="fas fa-backward"></i>
     </div>
-    <div class="previous">
+    <div :class="{muted: paginationData.isFirstPage}" class="previous" @click="paginationNavigate(-1)">
       <i class="fas fa-caret-left"></i>
     </div>
-    <div class="page">2</div>
-    <div class="forward">
+    <div class="page">{{paginationData.index}}</div>
+    <div :class="{muted: paginationData.isLastPage}" class="forward" @click="paginationNavigate(1)">
       <i class="fas fa-caret-right"></i>
     </div>
-    <div class="forward-x2">
+    <div :class="{muted: paginationData.isLastPage}" class="forward-x2" @click="paginationNavigate(2)">
       <i class="fas fa-forward"></i>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    paginationData:{
+      required: true
+    }
+  },
+  methods: {
+    paginationNavigate(val){
+      // val = 1 next,
+      // val = 2 last page, 
+      // val = -1 previous, 
+      // val = -2 first
+      this.$emit("navigate", val)
+    }
+  }
+};
 </script>
 
 <style lang="scss">
@@ -39,6 +54,16 @@ export default {};
   .page {
     color: $color4;
   }
+
+  .previous-x2,
+  .forward-x2,
+  .forward,
+  .previous{
+    &.muted {
+      color: grey;
+    }
+  }
+
 
   .previous-x2,
   .forward-x2 {

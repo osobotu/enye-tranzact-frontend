@@ -1,7 +1,7 @@
 <template>
   <div class="user-details">
     <div class="content">
-      <div class="profile-photo"></div>
+      <div class="profile-photo" :class="{female: (profile.Gender || '').toLowerCase() == `female`}"></div>
       <div class='close-button' @click="$emit(`close-button-clicked`)" v-show="showCloseButton"><i class="fas fa-times"></i></div>
       <div class="top">
         <div class="question-responses">
@@ -14,11 +14,11 @@
           </div>
           <div class="divider"></div>
           <div class="responses">
-            <div class="response name">Oyinbo David</div>
-            <div class="response">871-032-9564</div>
-            <div class="response">byyQsZq@qGMgXDA.com</div>
-            <div class="response">gIRpuhV</div>
-            <div class="response">Female</div>
+            <div class="response name">{{`${profile.FirstName} ${profile.LastName}`}}</div>
+            <div class="response">{{profile.PhoneNumber}}</div>
+            <div class="response">{{profile.Email}}</div>
+            <div class="response">{{profile.UserName}}</div>
+            <div class="response">{{profile.Gender}}</div>
           </div>
         </div>
       </div>
@@ -37,14 +37,14 @@
           </div>
           <div class="divider"></div>
           <div class="responses">
-            <div class="response">XfcAioj.org</div>
-            <div class="response">paypal</div>
-            <div class="response">34:62:89:02:64:89</div>
-            <div class="response">1976-08-12 01:06:24</div>
-            <div class="response">(40.2845, -170.1942)</div>
-            <div class="response">372699563278638</div>
-            <div class="response">American Express</div>
-            <div class="response">https://www.VYwmvdX.info/</div>
+            <div class="response">{{profile.DomainName}}</div>
+            <div class="response">{{profile.PaymentMethod}}</div>
+            <div class="response">{{profile.MacAddress}}</div>
+            <div class="response">{{profile.LastLogin}}</div>
+            <div class="response">({{profile.Longitude}}, {{profile.Latitude}})</div>
+            <div class="response">{{profile.CreditCardNumber}}</div>
+            <div class="response">{{profile.CreditCardType}}</div>
+            <div class="response">{{profile.URL}}</div>
           </div>
         </div>
       </div>
@@ -57,6 +57,10 @@ export default {
   props: {
     showCloseButton: {
       default: false
+    },
+    profile: {
+      required: true,
+      default: {}
     }
   }
 };
@@ -102,6 +106,10 @@ export default {
       background-size: cover;
       background-repeat: no-repeat;
       border: 1px solid rgba($color1, 0.35);
+
+      &.female {
+        background-image: url("/images/female.jpg");
+      }
     }
     & > .divider {
       height: 1px;
