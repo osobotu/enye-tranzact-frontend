@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <navbar-component />
+    <navbar-component @filter-profiles="filterProfiles($event)" />
     <section class="main-section">
       <div
         class="user-details-container d-none d-block-tablet"
@@ -40,6 +40,7 @@ import NavbarComponent from "~/components/NavbarComponent";
 import UserDetails from "~/components/UserDetails";
 import UserProfileStrip from "~/components/UserProfileStrip";
 import PaginationButtonGroup from "~/components/PaginationButtonGroup";
+import Vue from 'vue';
 
 export default {
   data() {
@@ -47,6 +48,7 @@ export default {
       showingModal: false,
       profiles: [],
       profilePopupIndex: 0,
+      profileFilters: {},
       paginationData: {
         index: 1,
         perpage: 20,
@@ -76,6 +78,11 @@ export default {
     closeModal() {
       this.showingModal = false;
     },
+    filterProfiles({key, value}) {
+      // this.profileFilters[key] = value
+
+      Vue.set(this.profileFilters, key, value)
+    },
     paginationNavigate(val) {
       // val = 1 next,
       // val = 2 last page,
@@ -85,36 +92,55 @@ export default {
       let temp = this.paginationData.index;
       temp = temp + val;
 
+      let tempProfiles = this.profiles.slice();
+      const profileFilters = this.profileFilters
+      
+      if(Object.keys(profileFilters).length > 0){
+        for(let key in profileFilters){
+          tempProfiles = tempProfiles.filter(el => el[key].toLowerCase() == profileFilters[key].toLowerCase())
+        }
+      }
+
       if (Math.abs(val) == 1) {
         if (temp < 1) {
           temp = 1;
-        } else if (temp > Math.ceil(this.profiles.length / 20)) {
-          temp = Math.ceil(this.profiles.length / 20);
+        } else if (temp > Math.ceil(tempProfiles.length / 20)) {
+          temp = Math.ceil(tempProfiles.length / 20);
         }
       } else {
         if(val < 0){
           temp = 1;
         }else {
-          temp = Math.ceil(this.profiles.length / 20);
+          temp = Math.ceil(tempProfiles.length / 20);
         }
       }
 
       Object.assign(this.paginationData, {
         index: temp,
         isFirstPage: temp == 1,
-        isLastPage: temp == Math.ceil(this.profiles.length / 20)
+        isLastPage: temp == Math.ceil(tempProfiles.length / 20)
       });
-    }
+    },
   },
   computed: {
     profilePopup() {
       return this.displayingProfiles[this.profilePopupIndex];
     },
     displayingProfiles() {
+      let profileFilters = this.profileFilters
+
+      let temp = this.profiles.slice();
+      
+      if(Object.keys(profileFilters).length > 0){
+        for(let key in profileFilters){
+          temp = temp.filter(el => el[key].toLowerCase() == profileFilters[key].toLowerCase())
+        }
+      }
+
       const startIndex =
         (this.paginationData.index - 1) * this.paginationData.perpage;
       const endIndexExclusive = startIndex + this.paginationData.perpage;
-      return this.profiles.slice(startIndex, endIndexExclusive);
+      return temp.slice(startIndex, endIndexExclusive);
     }
   }
 };

@@ -13,14 +13,14 @@
     <div class="bottom">
       <div class="filters-container">
         <div class="filter-group">
-          <select class="filter-select">
+          <select class="filter-select" @change="filterProfiles(`Gender`)">
             <option value disabled selected hidden>Filter by gender</option>
             <option value="female">FEMALE</option>
             <option value="male">MALE</option>
           </select>
         </div>
         <div class="filter-group">
-          <select class="filter-select">
+          <select class="filter-select" @change="filterProfiles(`PaymentMethod`)">
             <option value disabled selected hidden>Filter by payment method</option>
             <option
               :value="paymentMethod.key"
@@ -44,7 +44,7 @@ export default {
           value: "cc"
         },
         {
-          key: "money-order",
+          key: "money order",
           value: "money order"
         },
         {
@@ -57,6 +57,15 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    filterProfiles(filterType) {
+      const target = event.target
+
+      if(!target.value) return
+
+      this.$emit('filter-profiles', {key: filterType, value: target.value})
+    }
   }
 };
 </script>
