@@ -14,15 +14,19 @@
       <div class="filters-container">
         <div class="filter-group">
           <select class="filter-select">
-            <option value="" disabled selected hidden>Filter by gender</option>
+            <option value disabled selected hidden>Filter by gender</option>
             <option value="female">FEMALE</option>
             <option value="male">MALE</option>
           </select>
         </div>
         <div class="filter-group">
           <select class="filter-select">
-            <option value="" disabled selected hidden>Filter by payment method</option>
-            <option :value="paymentMethod.key" v-for="paymentMethod in paymentMethods" :key="paymentMethod.key">{{paymentMethod.value}}</option>
+            <option value disabled selected hidden>Filter by payment method</option>
+            <option
+              :value="paymentMethod.key"
+              v-for="paymentMethod in paymentMethods"
+              :key="paymentMethod.key"
+            >{{paymentMethod.value}}</option>
           </select>
         </div>
       </div>
@@ -50,9 +54,9 @@ export default {
         {
           key: "check",
           value: "check"
-        },
+        }
       ]
-    }
+    };
   }
 };
 </script>
@@ -73,7 +77,7 @@ export default {
     height: 50px;
     background: $color3;
     color: white;
-    
+
     .brand {
       text-transform: uppercase;
       font-size: 12px;
@@ -87,7 +91,10 @@ export default {
       display: flex;
       align-items: center;
       border-radius: 3px;
-      width: 250px;
+
+      @media only screen and (min-width: 768px) {
+        width: 250px;
+      }
       .search-box {
         border: none;
         outline: none;
@@ -102,6 +109,7 @@ export default {
     justify-content: center;
     background: white;
     height: 30px;
+        padding: 0 var(--body-padding);
     .filters-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
