@@ -2,6 +2,7 @@
   <div class="user-details">
     <div class="content">
       <div class="profile-photo"></div>
+      <div class='close-button' @click="$emit(`close-button-clicked`)" v-show="showCloseButton"><i class="fas fa-times"></i></div>
       <div class="top">
         <div class="question-responses">
           <div class="questions">
@@ -52,7 +53,13 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    showCloseButton: {
+      default: false
+    }
+  }
+};
 </script>
 
 <style lang="scss">
@@ -62,7 +69,7 @@ export default {};
   width: 100%;
   --profile-photo-size: 70px;
   --profile-photo-overflow: 20px;
-  --content-padding: 12px;
+  --content-padding: 16px;
   padding-left: var(--profile-photo-overflow);
 
   .content {
@@ -73,6 +80,14 @@ export default {};
     box-shadow: 0px 2px 10px 3px rgba($color1, 0.2);
     padding: var(--content-padding);
     position: relative;
+
+    & > .close-button {
+      color: red;
+      font-size: 16px;
+      position: absolute;
+      top: var(--content-padding);
+      right: var(--content-padding);
+    }
 
     & > .profile-photo {
       position: absolute;
@@ -95,35 +110,14 @@ export default {};
     }
 
     .top {
-        padding-left: calc( var(--profile-photo-size) - var(--profile-photo-overflow))
+        padding-left: calc( var(--profile-photo-size) - var(--profile-photo-overflow));
+        margin: 22px 0;
+    }
+    .bottom {
+        margin: 22px 0;
     }
   }
 
-  .question-responses {
-    display: grid;
-    grid-template-columns: max-content 2px 1fr;
-    gap: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    line-height: 25px;
-    font-size: 15px;
-
-    .question {
-      text-transform: uppercase;
-      color: $color1;
-    }
-
-    .response {
-      color: $color4;
-      &.name {
-        color: $color3;
-      }
-    }
-
-    & > .divider {
-      width: 1px;
-      background: rgba($color1, 0.15);
-    }
-  }
+  
 }
 </style>

@@ -1,8 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap');
-@import 'variables';
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap");
+@import "variables";
 
-:root{
-  --body-padding: 32px;
+:root {
+  --body-padding: 16px;
+
+  @media only screen and (min-width: 425px) {
+    --body-padding: 32px;
+  }
 
   @media only screen and (min-width: 768px) {
     --body-padding: 48px;
@@ -13,7 +17,7 @@
 }
 
 html {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 14px;
   word-spacing: 1px;
   -ms-text-size-adjust: 100%;
@@ -32,3 +36,71 @@ html {
   margin: 0;
 }
 
+.question-responses {
+  display: grid;
+  grid-template-columns: max-content 2px 1fr;
+  gap: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  line-height: 20px;
+  font-size: 12px;
+  overflow: hidden;
+
+  .question {
+    text-transform: uppercase;
+    color: $color1-dark;
+    // width: 70px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    @media only screen and (min-width: 768px) {
+      width: unset;
+    }
+  }
+
+  .response {
+    color: $color4;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    &.name {
+      color: $color3;
+    }
+  }
+
+  & > .divider {
+    width: 1px;
+    background: rgba($color1, 0.15);
+  }
+}
+
+// display types
+$display-types: (none, inline, block, flex, inline-block, inline-flex);
+$display-sizes: (
+  laptop-l: 1440px,
+  laptop: 1024px,
+  tablet: 768px,
+  mobile-l: 425px,
+  mobile: 375px,
+  mobile-s: 320px,
+);
+
+@mixin display-mixin {
+  @each $d-type in $display-types {
+    .d-#{$d-type} {
+      display: $d-type;
+    }
+
+    @each $key, $val in $display-sizes {
+      .d-#{$d-type}-#{$key} {
+        @media only screen and (min-width: $val) {
+          display: $d-type !important;
+        }
+      }
+    }
+  }
+}
+
+@include display-mixin;
