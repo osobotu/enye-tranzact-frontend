@@ -11,16 +11,19 @@
       </div>
     </div>
     <div class="bottom">
+      <div class="refresh-button-container" @click="resetProfileFilters()">
+        <i class="fas fa-redo"></i>
+      </div>
       <div class="filters-container">
         <div class="filter-group">
-          <select class="filter-select" @change="filterProfiles(`Gender`)">
+          <select ref="genderSelect" class="filter-select" @change="filterProfiles(`Gender`)">
             <option value disabled selected hidden>Filter by gender</option>
             <option value="female">FEMALE</option>
             <option value="male">MALE</option>
           </select>
         </div>
         <div class="filter-group">
-          <select class="filter-select" @change="filterProfiles(`PaymentMethod`)">
+          <select ref="paymentMethodSelect" class="filter-select" @change="filterProfiles(`PaymentMethod`)">
             <option value disabled selected hidden>Filter by payment method</option>
             <option
               :value="paymentMethod.key"
@@ -60,11 +63,16 @@ export default {
   },
   methods: {
     filterProfiles(filterType) {
-      const target = event.target
+      const target = event.target;
 
-      if(!target.value) return
+      if (!target.value) return;
 
-      this.$emit('filter-profiles', {key: filterType, value: target.value})
+      this.$emit("filter-profiles", { key: filterType, value: target.value });
+    },
+    resetProfileFilters(){
+      this.$refs.genderSelect.value = ""
+      this.$refs.paymentMethodSelect.value = ""
+      this.$emit(`reset-profile-filters`)
     }
   }
 };
@@ -118,7 +126,13 @@ export default {
     justify-content: center;
     background: white;
     height: 30px;
-        padding: 0 var(--body-padding);
+    padding: 0 var(--body-padding);
+
+    .refresh-button-container {
+      color: $color2;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
     .filters-container {
       display: grid;
       grid-template-columns: 1fr 1fr;

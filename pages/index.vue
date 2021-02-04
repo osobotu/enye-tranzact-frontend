@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <navbar-component @filter-profiles="filterProfiles($event)" />
+    <navbar-component @reset-profile-filters="resetProfileFilters()" @filter-profiles="filterProfiles($event)" />
     <section class="main-section">
       <div
         class="user-details-container d-none d-block-tablet"
@@ -82,6 +82,9 @@ export default {
       // this.profileFilters[key] = value
 
       Vue.set(this.profileFilters, key, value)
+    },
+    resetProfileFilters(){
+      this.profileFilters = {}
     },
     paginationNavigate(val) {
       // val = 1 next,
