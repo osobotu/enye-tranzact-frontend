@@ -55,7 +55,7 @@ export default {
       profileFilters: {},
       paginationData: {
         index: 1,
-        perpage: 5,
+        perpage: 20,
         isFirstPage: true,
         isLastPage: false
       },
@@ -153,16 +153,13 @@ export default {
       }
 
       if (this.searchString) {
-        // debugger
         this.searchString = this.searchString.toLowerCase();
         const searchWords = this.searchString.split(/\s+/);
 
         for (let profile of temp) {
-          // debugger
           const concatString = Object.values(profile)
             .join(" ")
             .toLowerCase();
-          // debugger
           profile["rankingValue"] = 0;
           for (let word of searchWords) {
             if (new RegExp(word).test(concatString)) {
@@ -170,7 +167,6 @@ export default {
             }
           }
 
-          // debugger
 
           if (new RegExp(this.searchString).test(concatString)) {
             profile["rankingValue"] += 3;
@@ -180,9 +176,6 @@ export default {
         temp.sort((a, b) => (a["rankingValue"] < b["rankingValue"] ? 1 : -1));
       }
 
-      if (this.searchString) {
-        // debugger;
-      }
 
       const startIndex =
         (this.paginationData.index - 1) * this.paginationData.perpage;
