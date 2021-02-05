@@ -6,7 +6,7 @@
         <span>Tranzact</span>
       </div>
       <div class="search-box-container">
-        <input type="text" class="search-box" placeholder="Search" />
+        <input type="text" class="search-box" placeholder="Search" @keyup="searchProfile()" />
         <i class="fas fa-search"></i>
       </div>
     </div>
@@ -73,6 +73,12 @@ export default {
       this.$refs.genderSelect.value = ""
       this.$refs.paymentMethodSelect.value = ""
       this.$emit(`reset-profile-filters`)
+    },
+    searchProfile(){
+      const target = event.target
+      if(!target.value) return
+
+      this.$emit(`search-profile`, target.value)
     }
   }
 };

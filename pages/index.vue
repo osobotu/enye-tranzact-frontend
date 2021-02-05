@@ -1,6 +1,10 @@
 <template>
   <div class="container">
-    <navbar-component @reset-profile-filters="resetProfileFilters()" @filter-profiles="filterProfiles($event)" />
+    <navbar-component
+      @search-profile="searchProfile($event)"
+      @reset-profile-filters="resetProfileFilters()"
+      @filter-profiles="filterProfiles($event)"
+    />
     <section class="main-section">
       <div
         class="user-details-container d-none d-block-tablet"
@@ -40,7 +44,7 @@ import NavbarComponent from "~/components/NavbarComponent";
 import UserDetails from "~/components/UserDetails";
 import UserProfileStrip from "~/components/UserProfileStrip";
 import PaginationButtonGroup from "~/components/PaginationButtonGroup";
-import Vue from 'vue';
+import Vue from "vue";
 
 export default {
   data() {
@@ -51,10 +55,11 @@ export default {
       profileFilters: {},
       paginationData: {
         index: 1,
-        perpage: 20,
+        perpage: 5,
         isFirstPage: true,
-        isLastPage: false,
-      }
+        isLastPage: false
+      },
+      searchString: ""
     };
   },
   async fetch() {
@@ -78,13 +83,13 @@ export default {
     closeModal() {
       this.showingModal = false;
     },
-    filterProfiles({key, value}) {
+    filterProfiles({ key, value }) {
       // this.profileFilters[key] = value
 
-      Vue.set(this.profileFilters, key, value)
+      Vue.set(this.profileFilters, key, value);
     },
-    resetProfileFilters(){
-      this.profileFilters = {}
+    resetProfileFilters() {
+      this.profileFilters = {};
     },
     paginationNavigate(val) {
       // val = 1 next,
@@ -96,11 +101,13 @@ export default {
       temp = temp + val;
 
       let tempProfiles = this.profiles.slice();
-      const profileFilters = this.profileFilters
-      
-      if(Object.keys(profileFilters).length > 0){
-        for(let key in profileFilters){
-          tempProfiles = tempProfiles.filter(el => el[key].toLowerCase() == profileFilters[key].toLowerCase())
+      const profileFilters = this.profileFilters;
+
+      if (Object.keys(profileFilters).length > 0) {
+        for (let key in profileFilters) {
+          tempProfiles = tempProfiles.filter(
+            el => el[key].toLowerCase() == profileFilters[key].toLowerCase()
+          );
         }
       }
 
@@ -111,9 +118,9 @@ export default {
           temp = Math.ceil(tempProfiles.length / 20);
         }
       } else {
-        if(val < 0){
+        if (val < 0) {
           temp = 1;
-        }else {
+        } else {
           temp = Math.ceil(tempProfiles.length / 20);
         }
       }
@@ -124,20 +131,57 @@ export default {
         isLastPage: temp == Math.ceil(tempProfiles.length / 20)
       });
     },
+    searchProfile(val) {
+      this.searchString = val;
+    }
   },
   computed: {
     profilePopup() {
       return this.displayingProfiles[this.profilePopupIndex];
     },
     displayingProfiles() {
-      let profileFilters = this.profileFilters
+      let profileFilters = this.profileFilters;
 
       let temp = this.profiles.slice();
-      
-      if(Object.keys(profileFilters).length > 0){
-        for(let key in profileFilters){
-          temp = temp.filter(el => el[key].toLowerCase() == profileFilters[key].toLowerCase())
+
+      if (Object.keys(profileFilters).length > 0) {
+        for (let key in profileFilters) {
+          temp = temp.filter(
+            el => el[key].toLowerCase() == profileFilters[key].toLowerCase()
+          );
         }
+      }
+
+      if (this.searchString) {
+        // debugger
+        this.searchString = this.searchString.toLowerCase();
+        const searchWords = this.searchString.split(/\s+/);
+
+        for (let profile of temp) {
+          // debugger
+          const concatString = Object.values(profile)
+            .join(" ")
+            .toLowerCase();
+          // debugger
+          profile["rankingValue"] = 0;
+          for (let word of searchWords) {
+            if (new RegExp(word).test(concatString)) {
+              profile["rankingValue"] += 1;
+            }
+          }
+
+          // debugger
+
+          if (new RegExp(this.searchString).test(concatString)) {
+            profile["rankingValue"] += 3;
+          }
+        }
+
+        temp.sort((a, b) => (a["rankingValue"] < b["rankingValue"] ? 1 : -1));
+      }
+
+      if (this.searchString) {
+        // debugger;
       }
 
       const startIndex =
